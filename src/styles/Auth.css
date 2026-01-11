@@ -1,99 +1,123 @@
+/* Reset some default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Main auth page container */
 .auth-container {
   display: flex;
   align-items: center;
   height: 100vh;
+<<<<<<< HEAD
   background: linear-gradient(135deg, #3879a7, #659bc6);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 
-.auth-card {
-  background: #ffffff;
-  padding: 50px;
-  border-radius: 16px;
-  text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  width: 100%;
-}
-
-.auth-card h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
-  margin-bottom: 30px;
-  font-weight: 700;
 =======
   background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Card / box */
+>>>>>>> 030cafb (Fix Auth.css and remove merge conflict artifacts)
 .auth-card {
-  background: white;
-  padding: 40px;
-  border-radius: 20px;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
->>>>>>> c3debbb67c6151a76325695486e2a377a05ad344
-}
-
-.google-btn {
-  display: flex;
-  align-items: center;
-<<<<<<< HEAD
-  justify-content: center;
-  gap: 12px;
-  padding: 14px 24px;
-  border: none;
-  background-color: #427edd;
-  color: #f9f9f9;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
-  margin-bottom: 20px;
+  max-width: 400px;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-.google-btn:hover {
-  background-color: #0c1018;
-  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
-}
-
-.google-btn img {
-  width: 20px;
-  height: 20px;
-}
-
-.auth-card p {
-  color: #000000;
-  font-size: 0.95rem;
-  margin: 0;
-  font-weight: 500;
-}
-
-.auth-card a {
-  color: #2480bd;
-  text-decoration: none;
+/* Heading */
+.auth-card h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
   font-weight: 700;
-  transition: color 0.3s ease;
 }
 
-.auth-card a:hover {
-  color: #2980b9;
-  text-decoration: underline;
-=======
-  gap: 10px;
-  padding: 10px 20px;
+/* Input fields */
+.auth-card input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.auth-card input:focus {
+  border-color: #66a6ff;
+}
+
+/* Button */
+.auth-card button {
+  width: 100%;
+  padding: 12px;
   border: none;
-  background-color: #4285f4;
-  color: white;
-  border-radius: 10px;
+  border-radius: 8px;
+  background: #66a6ff;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  font-weight: bold;
+  transition: background 0.3s ease;
 }
 
-.google-btn img {
-  width: 24px;
-  height: 24px;
->>>>>>> c3debbb67c6151a76325695486e2a377a05ad344
+.auth-card button:hover {
+  background: #4f8fe0;
+}
+
+/* Text below form */
+.auth-footer {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Links */
+.auth-footer a {
+  color: #66a6ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Error message */
+.auth-error {
+  color: #d9534f;
+  background: #fbeaea;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Success message */
+.auth-success {
+  color: #2e7d32;
+  background: #e6f4ea;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1.5rem;
+  }
 }
