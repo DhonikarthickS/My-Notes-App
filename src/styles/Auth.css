@@ -1,12 +1,11 @@
 .auth-container {
   display: flex;
-  justify-content: center;
   align-items: center;
   height: 100vh;
-<<<<<<< HEAD
   background: linear-gradient(135deg, #3879a7, #659bc6);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+
 
 .auth-card {
   background: #ffffff;
