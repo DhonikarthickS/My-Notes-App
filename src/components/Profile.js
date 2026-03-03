@@ -1,5 +1,4 @@
-"use client";
-
+// src/components/Profile.jsx
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
@@ -10,8 +9,10 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  CartesianGrid,
 } from "recharts";
 import { useNavigate } from "react-router-dom";
+import "../styles/App.css";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -22,17 +23,16 @@ const Profile = () => {
     const unsubscribe = auth.onAuthStateChanged((u) => {
       if (u) {
         setUser(u);
-
         const q = query(collection(db, "notes"), where("userId", "==", u.uid));
-
         onSnapshot(q, (snapshot) => {
           setNotes(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
         });
+      } else {
+        navigate("/");
       }
     });
-
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
   const today = new Date();
   const year = today.getFullYear();
@@ -46,102 +46,109 @@ const Profile = () => {
 
   notes.forEach((note) => {
     if (note.createdAt?.toDate) {
-      const noteDate = note.createdAt.toDate();
-      if (noteDate.getMonth() === month && noteDate.getFullYear() === year) {
-        const index = noteDate.getDate() - 1;
-        dailyData[index].notes += 1;
+      const d = note.createdAt.toDate();
+      if (d.getMonth() === month && d.getFullYear() === year) {
+        dailyData[d.getDate() - 1].notes += 1;
       }
     }
   });
 
   const pinnedCount = notes.filter((n) => n.pinned).length;
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4 md:p-8">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">
-            Profile
-          </h1>
-          <p className="text-slate-600 dark:text-slate-400">
-            View your account details and activity
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload?.length) {
+      return (
+        <div
+          style={{
+            background: "#1e1a35",
+            border: "1px solid rgba(99,102,241,0.3)",
+            borderRadius: 10,
+            padding: "8px 14px",
+            color: "#e8eaf6",
+            fontSize: "0.85rem",
+          }}
+        >
+          <p>Day {label}</p>
+          <p style={{ color: "#818cf8", fontWeight: 700 }}>
+            {payload[0].value} note{payload[0].value !== 1 ? "s" : ""}
           </p>
         </div>
+      );
+    }
+    return null;
+  };
 
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-md"
-        >
+  return (
+    <div className="profile-page">
+      {/* Header */}
+      <div className="profile-header">
+        <div>
+          <h1>Profile</h1>
+          <p>Your account details and activity</p>
+        </div>
+        <button onClick={() => navigate("/dashboard")} className="back-btn">
           ← Back to Dashboard
         </button>
       </div>
 
-      {/* Profile Card */}
+      {/* Profile card */}
       {user && (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 md:p-8 mb-8">
-          <div className="flex flex-col md:flex-row items-center gap-6">
+        <div className="profile-card">
+          <div className="profile-user-row">
             <img
               src={user.photoURL}
               alt="Profile"
-              className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-indigo-500 shadow-md"
+              className="profile-avatar"
               referrerPolicy="no-referrer"
             />
+            <div className="profile-user-info">
+              <h2>{user.displayName}</h2>
+              <p>{user.email}</p>
+            </div>
+          </div>
 
-            <div className="flex-1 text-center md:text-left">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                {user.displayName}
-              </h2>
-              <p className="text-slate-600 dark:text-slate-400 mb-6">
-                {user.email}
-              </p>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-lg p-4">
-                  <p className="text-sm text-indigo-600 dark:text-indigo-400">
-                    Total Notes
-                  </p>
-                  <p className="text-3xl font-bold text-indigo-900 dark:text-indigo-100">
-                    {notes.length}
-                  </p>
-                </div>
-
-                <div className="bg-amber-100 dark:bg-amber-900/30 rounded-lg p-4">
-                  <p className="text-sm text-amber-600 dark:text-amber-400">
-                    Pinned Notes
-                  </p>
-                  <p className="text-3xl font-bold text-amber-900 dark:text-amber-100">
-                    {pinnedCount}
-                  </p>
-                </div>
-              </div>
+          <div className="profile-stats">
+            <div className="stat-chip">
+              <p>Total Notes</p>
+              <p>{notes.length}</p>
+            </div>
+            <div className="stat-chip pinned">
+              <p>Pinned Notes</p>
+              <p>{pinnedCount}</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Activity Chart */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 md:p-8">
-        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-          Notes Activity
-        </h3>
+      {/* Activity chart */}
+      <div className="chart-card">
+        <h3>📊 Notes Activity — {today.toLocaleString("default", { month: "long" })} {year}</h3>
 
         {notes.length > 0 ? (
-          <div className="w-full h-80">
+          <div style={{ width: "100%", height: 300 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dailyData}>
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-
-                {/* ✅ FIXED LINE (FULL BAR COMPONENT) */}
+              <BarChart data={dailyData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <XAxis
+                  dataKey="day"
+                  tick={{ fill: "#8892b0", fontSize: 11 }}
+                  axisLine={{ stroke: "rgba(255,255,255,0.08)" }}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: "#8892b0", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  allowDecimals={false}
+                />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(99,102,241,0.08)" }} />
                 <Bar dataKey="notes" fill="#6366f1" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         ) : (
-          <p className="text-center text-gray-500 mt-10">
-            No notes available for this month.
+          <p style={{ textAlign: "center", color: "#8892b0", padding: "3rem 0" }}>
+            No notes this month yet.
           </p>
         )}
       </div>

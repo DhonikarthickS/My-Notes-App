@@ -1,123 +1,241 @@
-/* Reset some default browser styles */
+/* ============================================
+   Auth.css — My Notes App
+   Dark glassmorphism with animated shapes
+   ============================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap");
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Main auth page container */
-.auth-container {
+/* ── LOADING SCREEN ── */
+.loading-screen {
+  min-height: 100vh;
   display: flex;
   align-items: center;
-  height: 100vh;
-<<<<<<< HEAD
-  background: linear-gradient(135deg, #3879a7, #659bc6);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: center;
+  background: #0f0c1d;
 }
 
-
-=======
-  background: linear-gradient(135deg, #89f7fe, #66a6ff);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
-/* Card / box */
->>>>>>> 030cafb (Fix Auth.css and remove merge conflict artifacts)
+.loading-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(99, 102, 241, 0.2);
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-text {
+  color: #8892b0;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.95rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── AUTH CONTAINER ── */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0f0c1d;
+  font-family: "DM Sans", sans-serif;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── ANIMATED BACKGROUND SHAPES ── */
+.auth-bg-shapes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+  animation: floatShape 8s ease-in-out infinite;
+}
+
+.shape-1 {
+  width: 400px;
+  height: 400px;
+  background: #6366f1;
+  top: -100px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 300px;
+  height: 300px;
+  background: #ec4899;
+  bottom: -80px;
+  right: -80px;
+  animation-delay: -3s;
+}
+
+.shape-3 {
+  width: 200px;
+  height: 200px;
+  background: #06b6d4;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -6s;
+}
+
+@keyframes floatShape {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-30px) scale(1.05); }
+}
+
+/* ── AUTH CARD ── */
 .auth-card {
+  position: relative;
+  z-index: 10;
   width: 100%;
-  max-width: 400px;
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  box-shadow:
+    0 0 0 1px rgba(99, 102, 241, 0.15),
+    0 24px 60px rgba(0, 0, 0, 0.5);
+  animation: cardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-/* Heading */
-.auth-card h2 {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  color: #333;
-  font-weight: 700;
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(32px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Input fields */
-.auth-card input {
-  width: 100%;
-  padding: 12px 14px;
-  margin-bottom: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  outline: none;
-  transition: border 0.3s ease;
+/* ── LOGO ── */
+.auth-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  border-radius: 18px;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
 }
 
-.auth-card input:focus {
-  border-color: #66a6ff;
+.auth-logo-icon {
+  font-size: 1.8rem;
+  line-height: 1;
 }
 
-/* Button */
-.auth-card button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: #66a6ff;
+/* ── TYPOGRAPHY ── */
+.auth-title {
+  font-family: "Syne", sans-serif;
+  font-size: 1.9rem;
+  font-weight: 800;
   color: #ffffff;
-  font-size: 15px;
+  text-align: center;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.5px;
+}
+
+.auth-subtitle {
+  font-size: 0.95rem;
+  color: #8892b0;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+
+/* ── GOOGLE BUTTON ── */
+.google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: #ffffff;
+  color: #1e293b;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
   font-weight: 600;
+  font-family: "DM Sans", sans-serif;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1.5rem;
 }
 
-.auth-card button:hover {
-  background: #4f8fe0;
+.google-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  background: #f8fafc;
 }
 
-/* Text below form */
+.google-btn:active {
+  transform: translateY(0);
+}
+
+.google-btn img {
+  width: 22px;
+  height: 22px;
+}
+
+/* ── FOOTER ── */
 .auth-footer {
   text-align: center;
-  margin-top: 1rem;
-  font-size: 14px;
-  color: #555;
+  font-size: 0.9rem;
+  color: #8892b0;
 }
 
-/* Links */
-.auth-footer a {
-  color: #66a6ff;
+.auth-link {
+  color: #818cf8;
   text-decoration: none;
   font-weight: 600;
+  transition: color 0.2s;
 }
 
-.auth-footer a:hover {
+.auth-link:hover {
+  color: #a5b4fc;
   text-decoration: underline;
 }
 
-/* Error message */
-.auth-error {
-  color: #d9534f;
-  background: #fbeaea;
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  font-size: 14px;
-  text-align: center;
-}
-
-/* Success message */
-.auth-success {
-  color: #2e7d32;
-  background: #e6f4ea;
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  font-size: 14px;
-  text-align: center;
-}
-
-/* Responsive */
+/* ── RESPONSIVE ── */
 @media (max-width: 480px) {
   .auth-card {
-    padding: 1.5rem;
+    padding: 2rem 1.5rem;
+    border-radius: 20px;
+  }
+
+  .auth-title {
+    font-size: 1.6rem;
+  }
+
+  .google-btn {
+    padding: 13px 16px;
+    font-size: 0.95rem;
   }
 }

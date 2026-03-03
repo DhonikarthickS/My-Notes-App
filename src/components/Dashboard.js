@@ -1,6 +1,4 @@
 // src/components/Dashboard.jsx
-"use client";
-
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import {
@@ -15,8 +13,10 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { signOut } from "firebase/auth";
-import NoteCard from "./NoteCard";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import NoteCard from "./NoteCard";
+import "../styles/App.css";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [content, setContent] = useState("");
   const [editId, setEditId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((u) => {
@@ -32,19 +33,22 @@ const Dashboard = () => {
         setUser(u);
         const q = query(collection(db, "notes"), where("userId", "==", u.uid));
         onSnapshot(q, (snapshot) => {
-          const notesData = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
+          const notesData = snapshot.docs.map((d) => ({
+            id: d.id,
+            ...d.data(),
           }));
           setNotes(notesData);
         });
+      } else {
+        navigate("/");
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
   const handleLogout = async () => {
     await signOut(auth);
+    navigate("/");
   };
 
   const handleAddOrUpdate = async () => {
@@ -74,11 +78,10 @@ const Dashboard = () => {
     setContent(note.content);
     setEditId(note.id);
     setTimeout(() => {
-      const inputContainer = document.getElementById("input-container");
-      if (inputContainer) {
-        inputContainer.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }, 200);
+      document
+        .getElementById("note-input-top")
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 150);
   };
 
   const handleDelete = async (id) => {
@@ -106,82 +109,69 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <header className="sticky top-0 z-50 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              My Notes
-            </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Welcome, {user?.displayName || "User"}
-            </p>
-          </div>
+    <div className="dashboard-wrapper">
+      {/* ── HEADER ── */}
+      <header className="dashboard-header">
+        <div className="header-brand">
+          <h1>My Notes</h1>
+          <p>Welcome back, {user?.displayName || "User"} 👋</p>
+        </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              to="/profile"
-              className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 transition"
-            >
-              <img
-                src={user?.photoURL}
-                alt="Profile"
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium"
-            >
-              Logout
-            </button>
-          </div>
+        <div className="header-right">
+          <Link to="/profile" className="header-avatar">
+            <img
+              src={user?.photoURL}
+              alt="Profile"
+              referrerPolicy="no-referrer"
+            />
+          </Link>
+          <button onClick={handleLogout} className="logout-btn">
+            Logout
+          </button>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Input box */}
-        <div id="input-container" className="mb-8 bg-white dark:bg-slate-800 rounded-2xl shadow-md p-6 border">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-            {editId ? "Edit Note" : "Create a New Note"}
-          </h2>
+      {/* ── MAIN ── */}
+      <main className="dashboard-main">
+        {/* Input card */}
+        <div id="note-input-top" className="note-input-card">
+          <h2>{editId ? "✏️ Edit Note" : "➕ New Note"}</h2>
           <input
             type="text"
-            placeholder="Note Title"
+            placeholder="Note title..."
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full mb-3 px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500"
+            className="note-title-input"
           />
           <textarea
-            placeholder="Note Content"
+            placeholder="Write your note..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full h-32 mb-3 px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500"
+            className="note-content-input"
           />
           <button
             onClick={handleAddOrUpdate}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg"
+            className={`submit-btn ${editId ? "editing" : ""}`}
           >
             {editId ? "Update Note" : "Add Note"}
           </button>
         </div>
 
-        {/* Search bar */}
-        <div className="relative mb-6">
+        {/* Search */}
+        <div className="search-wrapper">
+          <span className="search-icon">🔍</span>
           <input
             type="text"
             placeholder="Search notes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500"
+            className="search-input"
           />
-          <span className="absolute left-3 top-3 text-gray-500 text-xl">🔍</span>
         </div>
 
         {/* Notes grid */}
         {sortedNotes.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="notes-grid">
             {sortedNotes.map((note) => (
               <NoteCard
                 key={note.id}
@@ -194,7 +184,12 @@ const Dashboard = () => {
             ))}
           </div>
         ) : (
-          <p className="text-center text-gray-600 mt-20">No notes found</p>
+          <div className="no-notes">
+            <div className="no-notes-icon">📭</div>
+            <p>
+              {searchTerm ? "No notes match your search." : "No notes yet. Create your first one!"}
+            </p>
+          </div>
         )}
       </main>
     </div>
